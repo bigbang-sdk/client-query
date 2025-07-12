@@ -1,0 +1,40 @@
+name: sync-dev
+on:
+  push:
+    branches:
+    - main
+
+permissions:
+  contents: write
+
+jobs:
+  sync-dev:
+    name: sync-dev
+    if: ${{ github.repository_owner == 'bigbang-sdk' }}
+    runs-on: ubuntu-latest
+    steps:
+    # 1) checkout the repo (full history so branches exist)
+    - name: Checkout full repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    # 2) configure git user (so the bot commit has a proper author)
+    - name: Setup Git identity
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    # 3) reset (or create) dev to main’s tip
+    - name: Reset dev to main
+      run: |
+        # switch to dev (or create it if missing)
+        git checkout -B dev
+        # hard‐reset to exactly match main
+        git reset --hard ${{ github.sha }}
+
+    # 4) push dev back to origin (force!)
+    - name: Push dev
+      run: |
+        git push --force origin dev
