@@ -1,0 +1,42 @@
+{
+  "name": "@bigbang-sdk/client-query",
+  "description": "Client-side query library for Next.js",
+  "author": "Bigbang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bigbang-sdk/client-query.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "pack": "npm run build && npm pack --pack-destination ./archive/"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "zod": "^3.24.3"
+  }
+}
