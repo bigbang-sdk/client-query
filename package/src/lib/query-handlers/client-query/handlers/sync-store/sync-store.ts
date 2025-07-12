@@ -1,15 +1,12 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { ClientQueryProps } from "../../client-query";
 import { ClientQueryResponse } from "../../../../../utils/types/client-query";
-import { StreamSubscriber } from "../../../../../utils/stream/stream-subscriber";
 
 /**
  * Props passed into a custom sync store handler.
  */
 export type HandlerProps<T> = {
   queryProps: ClientQueryProps<T>;
-  swr?: boolean;
-  subscriberRef?: React.RefObject<StreamSubscriber | null>;
   state: ClientQueryResponse<T>;
   setState: (updater: ClientQueryResponse<T> | ((prev: ClientQueryResponse<T>) => ClientQueryResponse<T>)) => void;
   notify: () => void;
@@ -40,7 +37,7 @@ const initialState: ClientQueryResponse<any> = {
  * @param swr - Whether stale-while-revalidate behavior should apply.
  * @returns An external store object with subscribe/snapshot methods.
  */
-export const createStore = <T>(queryProps: ClientQueryProps<T>, handler: HandlerFn<T>, subscriberRef?: React.RefObject<StreamSubscriber | null>, swr?: boolean) => {
+export const createStore = <T>(queryProps: ClientQueryProps<T>, handler: HandlerFn<T>) => {
   let state = initialState;
   const listeners = new Set<() => void>();
 
@@ -50,7 +47,7 @@ export const createStore = <T>(queryProps: ClientQueryProps<T>, handler: Handler
 
   const notify = () => listeners.forEach((l) => l());
 
-  handler({ queryProps, state, setState, notify, subscriberRef, swr });
+  handler({ queryProps, state, setState, notify });
 
   return {
     getSnapshot: () => state,
@@ -70,10 +67,10 @@ export const createStore = <T>(queryProps: ClientQueryProps<T>, handler: Handler
  */
 export const syncStore =
   <T>(handler: HandlerFn<T>) =>
-  (queryProps: ClientQueryProps<T>, subscriberRef?: React.RefObject<StreamSubscriber | null>, swr?: boolean): ClientQueryResponse<T> => {
+  (queryProps: ClientQueryProps<T>): ClientQueryResponse<T> => {
     const optionsKey = useMemo(() => JSON.stringify(queryProps.queryOptions ?? {}), [queryProps.queryOptions]);
 
-    const store = useMemo(() => createStore(queryProps, handler, subscriberRef, swr), [queryProps.queryUrl, optionsKey]);
+    const store = useMemo(() => createStore(queryProps, handler), [queryProps.queryUrl, optionsKey]);
 
     return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   };

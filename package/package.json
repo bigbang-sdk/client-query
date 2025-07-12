@@ -1,5 +1,6 @@
 {
   "name": "@bigbang-sdk/client-query",
+  "version": "1.0.0",
   "description": "Client-side query library for Next.js",
   "author": "Bigbang",
   "license": "MIT",
