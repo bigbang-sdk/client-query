@@ -33,6 +33,5 @@ export interface ClientQueryResponse<T> {
 export interface ClientQueryRequest<T> {
   queryUrl: string;
   queryOptions?: RequestInit;
-  queryCache?: boolean | "swr" | { tags?: string[]; revalidate?: number };
   querySchema?: ZodSchema<T>;
 }
