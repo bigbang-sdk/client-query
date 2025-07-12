@@ -1,4 +1,4 @@
-import { ZodSchema } from "zod";
+import { z } from "zod";
 
 /**
  * Represents the state of a client-side query using NDJSON streaming or fetch.
@@ -33,5 +33,5 @@ export interface ClientQueryResponse<T> {
 export interface ClientQueryRequest<T> {
   queryUrl: string;
   queryOptions?: RequestInit;
-  querySchema?: ZodSchema<T>;
+  querySchema?: z.ZodSchema<T>;
 }
